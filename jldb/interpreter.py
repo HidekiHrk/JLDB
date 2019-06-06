@@ -1,4 +1,5 @@
 import re
+import os
 
 class Interpreter:
     """
@@ -29,8 +30,9 @@ class Interpreter:
         return ';'.join([f"{table_id}={dct[table_id]}=endtable" for table_id in dct])
 
     def __init__(self, filename="data.jldb", encoding='utf-8'):
-        with open(filename, 'w', encoding=encoding) as f:
-            pass
+        if not os.path.isfile(filename):
+            with open(filename, 'w', encoding=encoding) as f:
+                pass
         self.filename = filename
         self.encoding = encoding
 
