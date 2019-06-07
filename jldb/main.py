@@ -13,7 +13,7 @@ class Client(object):
         table_dict = {
             "name":table_name,
             "columns": dict(map(lambda x: [x, columns[x].__name__], columns)),
-            "rows":[]
+            "rows":{}
         }
         tables[f'table_{new_id}'] = table_dict
         self.interpreter.update(tables)
@@ -49,5 +49,17 @@ class Table:
         return dict(map(lambda x: [x, eval(cols[x])], cols))
 
     @property
-    def rows(self):
+    def __rows(self):
         return self._dict['rows']
+
+    @property
+    def rows(self):
+        return list(self.__rows)
+
+    def add_row(self, **kwargs):
+
+
+class Row(object):
+    def __init__(self, table: Table, row_id: int):
+        pass
+        
