@@ -45,7 +45,7 @@ class Table:
     
     @property
     def columns(self):
-        cols = self._dict[columns]
+        cols = self._dict['columns']
         return dict(map(lambda x: [x, eval(cols[x])], cols))
 
     @property
@@ -57,7 +57,7 @@ class Table:
         return list(self.__rows)
 
     def add_row(self, **kwargs):
-
+        pass
 
 class Row(object):
     def __init__(self, table: Table, row_id: int):
