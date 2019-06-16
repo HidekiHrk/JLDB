@@ -1,7 +1,7 @@
-from jldb.main import *
+import jldb
 
-client = Client()
-
-print(client.tables)
-client.add_table("admins", id = int, name = str, money = float)
-print(client.get_table('admins').rows)
+client = jldb.Client('datinha.jldb')
+client.add_table('users', id=int, name=str, inventory=dict, coins=float)
+users = client.get_table('users')
+# users.add_row(id=0, name="hideki", inventory={'a':1}, coins=10)
+print(users.rows[1])

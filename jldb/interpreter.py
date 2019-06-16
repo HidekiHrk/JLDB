@@ -43,3 +43,6 @@ class Interpreter:
     def update(self, new_dict):
         with open(self.filename, 'w', encoding=self.encoding) as dbfile:
             dbfile.write(Interpreter.get_text(new_dict))
+
+if __name__ == "__main__":
+    print("It seems like you're a B-BAKAAAAAAAA >///<")

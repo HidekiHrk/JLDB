@@ -6,6 +6,8 @@ __pycache__/
 *.jldb
 *.db
 
+test.py
+
 # C extensions
 *.so
 
