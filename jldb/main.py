@@ -1,4 +1,5 @@
 import re
+import sys
 from jldb.interpreter import Interpreter
 
 # util functions #
@@ -6,11 +7,38 @@ def set_key(obj, key, value):
     obj[key] = value
     return obj
 
+def update_dict(obj, ndict):
+    obj.__dict__.update(ndict)
+    return obj
+
 def get_attr(obj, name, default=None):
     try:
         return getattr(obj, name)
     except AttributeError:
         return default
+
+# Gets a str that indicates a class of a specific module
+def get_class_modules_str(obj):
+    return f"{obj.__module__}.{obj.__qualname__}"
+
+# Gets a class from the get_class_modules_str function return str
+def get_class_modules_from_str(cstr: str):
+    cstr = cstr.split('.')
+    module = sys.modules[cstr[0]]
+    class_names = cstr[1:]
+    actual_class = getattr(module, class_names[0])
+    for m in class_names[1:]:
+        actual_class = getattr(module, class_names[m])
+    return actual_class
+
+def instantiate(iclass):
+    return iclass.__new__(iclass)
+
+def c_confirm(iclass, value, raw=True):
+    iobj = instantiate(iclass)
+    if isinstance(get_attr(iobj, '__dict__'), dict):
+        return value if raw else update_dict(iobj, value)
+    return iclass(value)
 
 class Table:
     def __init__(self, client, table_id: str):
@@ -36,13 +64,13 @@ class Table:
     def columns(self):
         # Get database columns and types of each one
         cols = self._dict['columns']
-        return dict(map(lambda x: [x, eval(cols[x])], cols))
+        return dict(map(lambda x: [x, get_class_modules_from_str(cols[x])], cols))
 
     @columns.setter
     def columns(self, value):
         # Update columns key of table dict
         self._dict = set_key(self._dict, 'columns', 
-            dict(map(lambda x: [x, value[x].__name__], value)))
+            dict(map(lambda x: [x, get_class_modules_str(value[x])], value)))
 
     @property
     def d_rows(self):
@@ -77,8 +105,8 @@ class Table:
         if all(x in self.columns for x in list(cols)):
             col_id = max(self.d_rows) + 1 if self.d_rows else 0
             self.d_rows = set_key(self.d_rows, col_id,
-                dict(map(lambda x: 
-                    [x, self.columns.get(x)(cols[x]) if ],
+                dict(map(lambda x:
+                    [x, c_confirm(self.columns.get(x), cols[x])],
                 cols))
             )
             return Row(self, col_id)
@@ -102,7 +130,7 @@ class Client(object):
         new_id = int(tables_last_id[len("table_"):]) + 1 if tables_last_id else 0
         table_dict = {
             "name":table_name,
-            "columns": dict(map(lambda x: [x, columns[x].__name__], columns)),
+            "columns": dict(map(lambda x: [x, get_class_modules_str(columns[x])], columns)),
             "rows":{}
         }
         tables[f'table_{new_id}'] = table_dict
@@ -110,18 +138,22 @@ class Client(object):
         return self.get_table(table_name)
 
     def get_table_dict(self, table_id: str):
+        # Gets a dict for this table
         return self.interpreter.read().get(table_id)
 
     @property
     def tables(self):
+        # Gets a list of tables in this database 
         table_dict = self.interpreter.read()
         return list(map(lambda x: Table(self, x), table_dict))
 
     def get_table(self, table_name: str) -> Table:
+        # get a specific table from table name
         tables = list(filter(lambda x: x.name == table_name, self.tables))
         return tables[0] if tables else None
 
     def update_table(self, table_id: str, new_dict:dict):
+        # update a specific table based on id
         new_tables_dict = self.interpreter.read()
         new_tables_dict[table_id] = new_dict
         self.interpreter.update(new_tables_dict)
@@ -139,14 +171,24 @@ class Row(object):
     def __setattr__(self, name, value):
         if self.__rowdict.get(name) != None:
             r_dict = self.__rowdict
-            r_dict[name] = self.__column_types[name](value)
+            r_class = self.__column_types[name]
+            r_dict[name] = c_confirm(r_class, value)
             self.table.d_rows = set_key(self.table.d_rows, self.row_id, r_dict)
         else:
             return super().__setattr__(name, value)
 
     def __getattr__(self, name):
         if self.__rowdict.get(name) != None:
-            return self.__rowdict.get(name)
+            return c_confirm(self.__column_types[name], self.__rowdict.get(name), raw=False)
+
+    @property
+    def dict(self):
+        pdict = self.__dict__
+        for key in self.__rowdict:
+            value = self.__rowdict.get(key)
+            clss = self.__column_types.get(key)
+            pdict[key] = c_confirm(clss, value, raw=False)
+        return pdict
 
 if __name__ == "__main__":
     print("U should close that program huh?")
