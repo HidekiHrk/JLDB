@@ -6,6 +6,12 @@ def set_key(obj, key, value):
     obj[key] = value
     return obj
 
+def get_attr(obj, name, default=None):
+    try:
+        return getattr(obj, name)
+    except AttributeError:
+        return default
+
 class Table:
     def __init__(self, client, table_id: str):
         self.client = client
@@ -13,39 +19,48 @@ class Table:
 
     @property
     def _dict(self):
+        # A function that returns a full dict of current table
         return self.client.get_table_dict(self.id)
 
     @_dict.setter
     def _dict(self, value):
+        # Update the dict to database
         self.client.update_table(self.id, value)
 
     @property
     def name(self):
+        # Database Name
         return self._dict['name']
     
     @property
     def columns(self):
+        # Get database columns and types of each one
         cols = self._dict['columns']
         return dict(map(lambda x: [x, eval(cols[x])], cols))
 
     @columns.setter
     def columns(self, value):
+        # Update columns key of table dict
         self._dict = set_key(self._dict, 'columns', 
             dict(map(lambda x: [x, value[x].__name__], value)))
 
     @property
     def d_rows(self):
+        # returns a dict of all rows stored in this table
         return self._dict['rows']
 
     @d_rows.setter
     def d_rows(self, value):
+        # updates the rows key of current table dict 
         self._dict = set_key(self._dict, 'rows', value)
 
     @property
     def rows(self) -> list:
+        # Get a list of Row objects that's stored on this table
         return list(map(lambda x: Row(self, x), self.d_rows))
     
     def get_rows(self, **cols):
+        # Get a list of rows that matches with the cols
         if all(x in self.columns for x in list(cols)):
             return list(filter(lambda x:
                 len(list(filter(lambda y: getattr(x, y) == cols[y], cols))),self.rows))
@@ -53,14 +68,18 @@ class Table:
             raise Exception(f'All cols must be {self.name} columns')
 
     def get_first(self, **cols):
+        # get the first element that matches with the cols
         rws = self.get_rows(**cols)
         return rws[0] if len(rws) else None
 
     def add_row(self, **cols):
+        # add a row based on cols, each row is unique and have a specific row_id
         if all(x in self.columns for x in list(cols)):
             col_id = max(self.d_rows) + 1 if self.d_rows else 0
             self.d_rows = set_key(self.d_rows, col_id,
-                dict(map(lambda x: [x, self.columns.get(x)(cols[x])], cols))
+                dict(map(lambda x: 
+                    [x, self.columns.get(x)(cols[x]) if ],
+                cols))
             )
             return Row(self, col_id)
         else:
@@ -71,6 +90,12 @@ class Client(object):
         self.interpreter = Interpreter(filename=filename)
 
     def add_table(self, table_name: str, **columns):
+        """
+            add a table with a unique table_name and columns with their respective types
+            It's highly recommended to use built-in types
+            in case of using other classes as column type, the database should be used
+            on the same code, and the other class must have a __dict__ property.
+        """
         if self.get_table(table_name): return self.get_table(table_name)
         tables = self.interpreter.read()
         tables_last_id = list(tables)[-1] if len(tables) else None
