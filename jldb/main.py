@@ -7,6 +7,10 @@ def set_key(obj, key, value):
     obj[key] = value
     return obj
 
+def del_key(obj, key):
+    del obj[key]
+    return obj
+
 def update_dict(obj, ndict):
     obj.__dict__.update(ndict)
     return obj
@@ -37,6 +41,7 @@ def instantiate(iclass):
 def c_confirm(iclass, value, raw=True):
     iobj = instantiate(iclass)
     if isinstance(get_attr(iobj, '__dict__'), dict):
+        value = value if type(value) == dict else value.__dict__
         return value if raw else update_dict(iobj, value)
     return iclass(value)
 
@@ -109,9 +114,16 @@ class Table:
                     [x, c_confirm(self.columns.get(x), cols[x])],
                 cols))
             )
+            print(self.d_rows)
             return Row(self, col_id)
         else:
             raise Exception(f'All cols must be {self.name} columns')
+    
+    def add_column(self, cname, ctype):
+        self.columns = set_key(self.columns, cname, ctype)
+
+    def remove_column(self, cname):
+        self.columns = del_key(self.columns, cname)
 
 class Client(object):
     def __init__(self, filename="data.jldb"):
@@ -169,7 +181,7 @@ class Row(object):
         return self.table.d_rows[self.row_id]
 
     def __setattr__(self, name, value):
-        if self.__rowdict.get(name) != None:
+        if self.__column_types.get(name) != None:
             r_dict = self.__rowdict
             r_class = self.__column_types[name]
             r_dict[name] = c_confirm(r_class, value)
@@ -180,6 +192,12 @@ class Row(object):
     def __getattr__(self, name):
         if self.__rowdict.get(name) != None:
             return c_confirm(self.__column_types[name], self.__rowdict.get(name), raw=False)
+
+    def __delattr__(self, name):
+        if self.__rowdict.get(name) != None:
+            self.table.d_rows = set_key(self.table.d_rows, self.row_id, del_key(self.__rowdict, name))
+        else:
+            return super().__delattr__(name)
 
     @property
     def dict(self):
