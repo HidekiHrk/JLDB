@@ -4,6 +4,6 @@
 JSON-like DataBase for Python
 
 Install:
-```
+```python
 pip install JLDB
 ```
