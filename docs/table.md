@@ -45,4 +45,4 @@ table.add_row(name="foo", id=1)
 
 **➡** remove_column(cname: str) : *remove a column based on name;*
 
-**➡** delete() : *deletes the entire current table from the database; (make sure that you won't use any references of this table, otherwise it will result in a error);*
+**➡** delete() : *deletes the entire current table from the database; (make sure that you won't use any references of this table, otherwise it will result in a TableNotFoundError);*
