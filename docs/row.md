@@ -4,7 +4,7 @@
 
 ### Properties:
 
-**➡** table : *the [Table](https://github.com/HidekiHrk/JLDB/blob/master/docs/client.md) object wich the row is stored;*
+**➡** table : *the [Table](https://github.com/HidekiHrk/JLDB/blob/master/docs/table.md) object wich the row is stored;*
 
 **➡** row_id : *the row id. each row have a unique id in the table; type: int;*
 
