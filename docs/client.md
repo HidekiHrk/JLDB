@@ -2,9 +2,9 @@
 
 ### Properties:
 
-**➡** interpreter : *the db file interpreter, don't touch it if you don't know what you're doing*
+**➡** interpreter : *the db file interpreter, don't touch it if you don't know what you're doing;*
 
-**➡** tables : *a list of tables in the database*
+**➡** tables : *a list of tables in the database;*
 
 ### Methods:
 
@@ -27,6 +27,6 @@ print(row1.foo.name)
 ```
 *Return: [Table](https://github.com/HidekiHrk/JLDB/blob/master/docs/table.md)*
 
-**➡** remove_table(table_id: str) : *it's like "add_table", but it removes a table from the database.*
+**➡** remove_table(table_id: str) : *it's like "add_table", but it removes a table from the database;*
 
-**➡** get_table(table_name: str) : *gets a table by the name.*
+**➡** get_table(table_name: str) : *gets a table by the name;*
