@@ -1,5 +1,11 @@
 # Docs: Client
 
+### Properties:
+
+**➡** interpreter : *the db file interpreter, don't touch it if you don't know what you're doing*
+
+**➡** tables : *a list of tables in the database*
+
 ### Methods:
 
 **➡** add_table(table_name: str, **columns) : *adds a table to the database. Example:*
@@ -24,9 +30,3 @@ print(row1.foo.name)
 **➡** remove_table(table_id: str) : *it's like "add_table", but it removes a table from the database.*
 
 **➡** get_table(table_name: str) : *gets a table by the name.*
-
-### Properties:
-
-**➡** interpreter : *the db file interpreter, don't touch it if you don't know what you're doing*
-
-**➡** tables : *a list of tables in the database*
