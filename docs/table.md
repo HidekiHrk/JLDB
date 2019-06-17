@@ -15,3 +15,21 @@
 **➡** rows : *return a list of [Row](https://github.com/HidekiHrk/JLDB/blob/master/docs/row.md) objects stored on this table;*
 
 ### Methods:
+
+**➡** get_rows(**cols) : *returns a list of [Row](https://github.com/HidekiHrk/JLDB/blob/master/docs/row.md) objects that matches with the value of parameters passed on the function. Example:*
+
+```python
+rows = table.get_rows(name="foo")
+for row in rows:
+  print(row.name)
+
+""" output:
+  foo
+  foo
+  foo
+  ...
+"""
+```
+
+**➡** get_first(**cols) : *it's like "get_rows", but this one returns the first [Row](https://github.com/HidekiHrk/JLDB/blob/master/docs/row.md) object that matches with the parameters passed;*
+
