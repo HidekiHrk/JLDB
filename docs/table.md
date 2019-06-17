@@ -38,3 +38,11 @@ for row in rows:
 table.add_row(name="foo", id=1)
 ```
 *Return: [Row](https://github.com/HidekiHrk/JLDB/blob/master/docs/row.md)*
+
+**➡** remove_row(row_id: int) : *removes a row based on id;*
+
+**➡** add_column(cname: str, ctype) : *add a column to the table with a given name and type;*
+
+**➡** remove_column(cname: str) : *remove a column based on name;*
+
+**➡** delete() : *deletes the entire current table from the database; (make sure that you won't use any references of this table, otherwise it will result in a error);*
