@@ -13,9 +13,12 @@ from jldb import Client
 
 client = Client(filename="data.jldb")
 
-client.create_table("users", id=int, name=str, age=int, money=float)
+client.add_table("users", id=int, name=str, age=int, money=float)
 
 users = client.get_table("users")
-users.add_row(id=0, name="Foo", age=22, money=300.0)
-print(users.get_first(id=0).name)
+users.add_row(id=0, name="bar", age=22, money=300.0)
+foo = users.get_first(id=0)
+print(foo.id, foo.name, foo.age, foo.money)
+
+# output: 0 bar 22 300.0
 ```
