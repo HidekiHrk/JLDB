@@ -1,5 +1,7 @@
 # Docs: Client
 
+##### [Return to the docs](https://github.com/HidekiHrk/JLDB/blob/master/docs/main.md)
+
 ### Properties:
 
 **➡** interpreter : *the db file interpreter, don't touch it if you don't know what you're doing;*
