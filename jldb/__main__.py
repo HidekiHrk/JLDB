@@ -1,6 +1,7 @@
 import re
 import sys
 from jldb.interpreter import Interpreter
+from jldb.errors import *
 
 # util functions #
 def set_key(obj, key, value):
@@ -48,7 +49,13 @@ def c_confirm(iclass, value, raw=True):
 class Table:
     def __init__(self, client, table_id: str):
         self.client = client
-        self.id = table_id
+        self.__id = table_id
+
+    @property
+    def id(self):
+        if not self.__id:
+            raise TableNotFoundError("This table does not exists anymore, please delete the ref to this object in your code.")
+        return self.__id
 
     @property
     def _dict(self):
@@ -98,7 +105,7 @@ class Table:
             return list(filter(lambda x:
                 len(list(filter(lambda y: getattr(x, y) == cols[y], cols))),self.rows))
         else:
-            raise Exception(f'All cols must be {self.name} columns')
+            raise ColumnError(f'All cols must be {self.name} columns')
 
     def get_first(self, **cols):
         # get the first element that matches with the cols
@@ -117,13 +124,17 @@ class Table:
             print(self.d_rows)
             return Row(self, col_id)
         else:
-            raise Exception(f'All cols must be {self.name} columns')
+            raise ColumnError(f'All cols must be {self.name} columns')
     
     def add_column(self, cname, ctype):
         self.columns = set_key(self.columns, cname, ctype)
 
     def remove_column(self, cname):
         self.columns = del_key(self.columns, cname)
+
+    def delete(self):
+        self.client.remove_table(self.id)
+        self.__id = None
 
 class Client(object):
     def __init__(self, filename="data.jldb"):
@@ -148,6 +159,13 @@ class Client(object):
         tables[f'table_{new_id}'] = table_dict
         self.interpreter.update(tables)
         return self.get_table(table_name)
+    
+    def remove_table(self, table_id: str):
+        table_dict = self.interpreter.read()
+        if not table_dict.get(table_id):
+            raise TableNotFoundError(f"a table with this id: {table_id} does not exists")
+        del table_dict[table_id]
+        self.interpreter.update(table_dict)
 
     def get_table_dict(self, table_id: str):
         # Gets a dict for this table

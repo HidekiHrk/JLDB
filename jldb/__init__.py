@@ -1,4 +1,5 @@
-from jldb import main
+import jldb.__main__ as main
+from jldb.errors import *
 
 Client = main.Client
 
