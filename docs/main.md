@@ -1,4 +1,4 @@
-# Docs: Home
+# Docs
 
 **Classes:**
 - [Client](https://github.com/HidekiHrk/JLDB/blob/master/docs/client.md)
