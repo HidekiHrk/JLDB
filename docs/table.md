@@ -33,3 +33,8 @@ for row in rows:
 
 **➡** get_first(**cols) : *it's like "get_rows", but this one returns the first [Row](https://github.com/HidekiHrk/JLDB/blob/master/docs/row.md) object that matches with the parameters passed;*
 
+**➡** add_row(**cols) : *adds a row to the table based on parameters passed on the function. Example:*
+```python
+table.add_row(name="foo", id=1)
+```
+*Return: [Row](https://github.com/HidekiHrk/JLDB/blob/master/docs/row.md)*
