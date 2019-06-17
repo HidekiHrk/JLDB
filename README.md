@@ -7,3 +7,5 @@ Install:
 ```python
 pip install JLDB
 ```
+
+*For more info, visite the __[Docs](https://github.com/HidekiHrk/JLDB/blob/master/docs/main.md)__*
