@@ -2,7 +2,7 @@ from distutils.core import setup
 setup(
   name='JLDB',
   packages = ['jldb'],
-  version = '0.2',
+  version = '0.3',
   license='MIT',
   description = 'JSON-like db for python3.',
   author = 'HidekiHrk',
