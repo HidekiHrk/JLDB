@@ -1,6 +1,10 @@
 import sys
 import os
-from dbclasses import Client
+
+try:
+    from dbclasses import Client
+except:
+    from jldb.dbclasses import Client
 
 version = 'v0.1'
 
