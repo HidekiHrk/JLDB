@@ -8,7 +8,7 @@ setup(
   author = 'HidekiHrk',
   author_email = 'hidekihiroki123@gmail.com',
   url = 'https://github.com/HidekiHrk/JLDB',
-  download_url = 'https://github.com/HidekiHrk/JLDB/archive/0.3.tar.gz',
+  download_url = 'https://github.com/HidekiHrk/JLDB/archive/1.0.tar.gz',
   keywords = ['python', 'db', 'database', 'better', 'query', 'json', 'dict'],
   install_requires=[],
   classifiers=[
