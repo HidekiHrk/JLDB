@@ -94,5 +94,11 @@ def main(path):
 args = sys.argv
 
 if len(args) >= 2:
-    path = ' '.join(args[1:])
-    main(path)
+    if args[1].strip().lower() == "--help":
+        print(f"""
+            usage:
+                {args[0]} [path...]
+        """)
+    else:
+        path = ' '.join(args[1:])
+        main(path)
