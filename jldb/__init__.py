@@ -1,5 +1,9 @@
-import jldb.__main__ as main
-from jldb.errors import *
+if not __package__:
+    exec("import dbclasses as main")
+    exec("from errors import *")
+else:
+    import jldb.dbclasses as main
+    from jldb.errors import *
 
 Client = main.Client
 
