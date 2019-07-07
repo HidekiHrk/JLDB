@@ -21,6 +21,7 @@ users = client.get_table("users")
 users.add_row(id=0, name="bar", age=22, money=300.0)
 foo = users.get_first(id=0)
 print(foo.id, foo.name, foo.age, foo.money)
+client.commit()
 
 # output: 0 bar 22 300.0
 ```
