@@ -5,6 +5,8 @@
 - [Table](https://github.com/HidekiHrk/JLDB/blob/master/docs/table.md)
 - [Row](https://github.com/HidekiHrk/JLDB/blob/master/docs/row.md)
 
+*Obs: All classes have support to with statements*
+
 *I know, it's so much simple xD*
 
 **Getting Started**

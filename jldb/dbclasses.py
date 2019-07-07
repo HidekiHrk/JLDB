@@ -80,6 +80,15 @@ class Row(object):
         else:
             return super().__delattr__(name)
 
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *exc):
+        self.save()
+
+    def save(self):
+        self.table.client.commit()
+
     def delete(self):
         self.table.remove_row(self.row_id)
 
@@ -184,9 +193,28 @@ class Table:
         self.client.remove_table(self.id)
         self.__id = None
 
+    def save(self):
+        self.client.commit()
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *exc):
+        self.save()
+
 class Client(object):
     def __init__(self, filename="data.jldb"):
         self.interpreter = Interpreter(filename=filename)
+        self.__data = self.interpreter.read()
+
+    def refresh(self):
+        self.__data = self.interpreter.read()
+
+    def commit(self):
+        self.interpreter.update(self.__data)
+
+    async def async_commit(self):
+        self.commit()
 
     def add_table(self, table_name: str, **columns) -> Table:
         """
@@ -196,34 +224,29 @@ class Client(object):
             on the same code, and the other class must have a __dict__ property.
         """
         if self.get_table(table_name): return self.get_table(table_name)
-        tables = self.interpreter.read()
-        tables_last_id = list(tables)[-1] if len(tables) else None
+        tables_last_id = list(self.__data)[-1] if len(self.__data) else None
         new_id = int(tables_last_id[len("table_"):]) + 1 if tables_last_id else 0
         table_dict = {
             "name":table_name,
             "columns": dict(map(lambda x: [x, get_class_modules_str(columns[x])], columns)),
             "rows":{}
         }
-        tables[f'table_{new_id}'] = table_dict
-        self.interpreter.update(tables)
+        self.__data[f'table_{new_id}'] = table_dict
         return self.get_table(table_name)
     
     def remove_table(self, table_id: str):
-        table_dict = self.interpreter.read()
-        if not table_dict.get(table_id):
+        if not self.__data.get(table_id):
             raise TableNotFoundError(f"a table with this id: {table_id} does not exists")
-        del table_dict[table_id]
-        self.interpreter.update(table_dict)
+        del self.__data[table_id]
 
     def get_table_dict(self, table_id: str) -> dict:
         # Gets a dict for this table
-        return self.interpreter.read().get(table_id)
+        return self.__data.get(table_id)
 
     @property
     def tables(self) -> list:
         # Gets a list of tables in this database 
-        table_dict = self.interpreter.read()
-        return list(map(lambda x: Table(self, x), table_dict))
+        return list(map(lambda x: Table(self, x), self.__data))
 
     def get_table(self, table_name: str) -> Table:
         # get a specific table from table name
@@ -232,9 +255,13 @@ class Client(object):
 
     def update_table(self, table_id: str, new_dict:dict):
         # update a specific table based on id
-        new_tables_dict = self.interpreter.read()
-        new_tables_dict[table_id] = new_dict
-        self.interpreter.update(new_tables_dict)
+        self.__data[table_id] = new_dict
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *exc):
+        self.commit()
 
 if __name__ == "__main__":
     print("U should close that program huh?")
