@@ -37,4 +37,4 @@ print(row1.foo.name)
 
 **->** commit() : *save changes to db;*
 
-**->** async_commit() : __**(this method is a [Coroutine](https://docs.python.org/3/library/asyncio-task.html))**__ *assyncronously save changes to db;*
+**->** async_commit() : __**(this method is a [Coroutine](https://docs.python.org/3/library/asyncio-task.html))**__ *asynchronously save changes to db;*
