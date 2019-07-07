@@ -21,4 +21,6 @@ print(table1.get_first(name="bar")) # <jldb.__main__.Row object at 0x00000000000
 
 ### Methods:
 
+**->** save() : *commits the row to the table;*
+
 **->** delete() : *deletes the row from the table;*
